@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateNoteDto } from 'src/presentation/dtos/create-dto';
 import { NotesService } from './notes.service';
 import { Note } from 'src/infrastructre/Notes';
+import { ParseUuidPipe } from 'src/common/pipes/parse-uuid.pipes';
+import { ApiKeyGuard } from 'src/common/guards/api-key.guards';
 
 
+@UseGuards(ApiKeyGuard)
 @Controller('notes')
 export class NotesController {
 
@@ -20,7 +23,7 @@ export class NotesController {
     }
 
     @Get('/:id' )
-    async getNoteById(@Param('id') id: string):Promise<Note>{
+    async getNoteById(@Param('id', ParseUuidPipe) id: string):Promise<Note>{
         return this.notesService.getNoteById(id);
     }   
     @Delete('/:id')
